@@ -47,9 +47,27 @@ interface IERC20 {
 }
 
 contract TokenLocker {
+    /**
+     * @dev Emitted when PLS is sent.
+     * @param value The amount of PLS sent.
+     */
     event SendPLS(uint value);
+    /**
+     * @dev Emitted when a token is sent.
+     * @param token The address of the token contract.
+     * @param value The amount of tokens sent.
+     */
     event SendToken(address indexed token, uint value);
+    /**
+     * @dev Emitted when PLS is received.
+     * @param value The amount of PLS received.
+     */
     event ReceivePLS(uint value);
+    /**
+     * @dev Emitted when a token is received.
+     * @param token The address of the token contract.
+     * @param value The amount of tokens received.
+     */
     event ReceiveToken(address indexed token, uint value);
 
     struct Lock {
@@ -69,6 +87,14 @@ contract TokenLocker {
         owner = msg.sender;
     }
 
+    /**
+     * @dev Creates a lock for a specific token.
+     * @param _tokenAddress The address of the token contract.
+     * @param _value The amount of tokens to lock.
+     * @param duration The duration of the lock in seconds.
+     * Requirements:
+     * - Only the contract owner can call this function.
+     */
     function createTokenLock(
         address _tokenAddress, 
         uint _value,
@@ -90,6 +116,13 @@ contract TokenLocker {
             locks[lockId] = lock;
             emit ReceiveToken(_tokenAddress, _value);
     }
+
+    /**
+     * @dev Creates a lock for PLS (native gas token for PulseChain).
+     * @param duration The duration of the lock in seconds.
+     * Requirements:
+     * - Only the contract owner can call this function.
+     */
     function createPlsLock(
         uint duration
     ) external payable {
@@ -107,6 +140,12 @@ contract TokenLocker {
         emit ReceivePLS(msg.value);
     }
 
+    /**
+     * @dev Ends a lock and withdraws the locked tokens or PLS.
+     * @param _lockId The ID of the lock to end.
+     * Requirements:
+     * - The lock must exist, not have been withdrawn already, and its end time must have passed.
+     */
     function endLockAndWithdraw(uint _lockId) external {
         Lock storage lock = locks[_lockId];
         require(lock.lockStartTime != 0, "invalid lock id");
