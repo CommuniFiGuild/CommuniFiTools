@@ -1,6 +1,7 @@
 import requests
 from bech32 import bech32_encode, bech32_decode, convertbits
 import json
+
 # Replace these with your specific values
 RPC_ENDPOINT = "https://rest.unicorn.meme"
 CONTRACT_ADDRESS = "unicorn1rn9f6ack3u8t3ed04pfaqpmh5zfp2m2ll4mkty"
